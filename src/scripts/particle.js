@@ -1,7 +1,7 @@
+import { animate, distanceBetweeen } from './utils';
+
 export default class Particle {
     constructor(initialX, initialY) {
-        this.speed = this.getRandomNumber(10, 20);
-
         this.el = document.createElement('div');
         this.el.style.position = 'absolute';
         this.el.style.transition = 'all 0.1s ease 0s';
@@ -12,34 +12,15 @@ export default class Particle {
         this.setPosition(initialX, initialY);
         this.setRandomSize();
         this.setRandomColor();
-        this.startBrownianMotion();
+        this.move();
     }
 
-    getRandomNumber(from, to) {
-        const rnd = Math.random();
-        return parseInt((rnd * (to - from)) + from);
+    getPositionX() {
+        return this.getPixels('left');
     }
 
-    setRandomColor() {
-        const rnd = Math.random();
-        const hex = 0x1000000 + rnd * 0xffffff;
-        const color = hex.toString(16).substr(1, 6);
-        this.el.style.background = ['#', color].join('');
-    }
-
-    getPixels(property) {
-        const value = this.el.style[property];
-        return parseInt(value);
-    }
-
-    setPixels(property, value) {
-        this.el.style[property] = [value, 'px'].join('');
-    }
-
-    setRandomSize() {
-        const side = this.getRandomNumber(20, 70);
-        this.setPixels('width', side);
-        this.setPixels('height', side);
+    getPositionY() {
+        return this.getPixels('top');
     }
 
     getDocumentSize() {
@@ -56,21 +37,44 @@ export default class Particle {
         }
     }
 
-    getPositionX() {
-        return this.getPixels('left');
+    getPixels(property) {
+        const value = this.el.style[property];
+        return parseInt(value);
     }
 
-    getPositionY() {
-        return this.getPixels('top');
+    setPixels(property, value) {
+        this.el.style[property] = [value, 'px'].join('');
+    }
+
+    getRandomNumber(from, to) {
+        const rnd = Math.random();
+        return parseInt((rnd * (to - from)) + from);
+    }
+
+    setRandomColor() {
+        const rnd = Math.random();
+        const hex = 0x1000000 + rnd * 0xffffff;
+        const color = hex.toString(16).substr(1, 6);
+        this.el.style.background = ['#', color].join('');
+    }
+
+    setPosition(x, y) {
+        this.setPixels('left', x);
+        this.setPixels('top', y);
+    }
+
+    setRandomSize() {
+        const side = this.getRandomNumber(20, 70);
+        this.setPixels('width', side);
+        this.setPixels('height', side);
     }
 
     calcNextCoords() {
-        const to = parseInt(this.speed / 2);
-        const from = to * -1;
-        const curX = this.getPositionX();
-        const curY = this.getPositionY();
-        const x = curX + this.getRandomNumber(from, to);
-        const y = curY + this.getRandomNumber(from, to);
+        const { width: toX, height: toY } = this.getDocumentSize();
+        const fromX = this.getPositionX() * -1;
+        const fromY = this.getPositionY() * -1;
+        const x = this.getRandomNumber(fromX, toX);
+        const y = this.getRandomNumber(fromY, toY);
         return { x, y };
     }
 
@@ -104,18 +108,31 @@ export default class Particle {
         }
     }
 
-    setPosition(x, y) {
-        this.setPixels('left', x);
-        this.setPixels('top', y);
-    }
+    move() {
+        // calcNextCoords - Получаем случайную точку к которой будем двигаться
+        // withRebound - Если точка лежит за границей окна, сдвигаем точку до границы
+        const { x:targetX, y:targetY } = this.withRebound(this.calcNextCoords());
+        const curX = this.getPositionX();
+        const curY = this.getPositionY();
+        // Получаем расстояние между верхним левым краем точки и целевой точки
+        const distance = distanceBetweeen(
+            { x: targetX, y: targetY },
+            { x: curX, y: curY },
+        );
 
-    moveRandomly() {
-        const { x:nextX, y:nextY } = this.withRebound(this.calcNextCoords());
-        this.setPosition(nextX, nextY);
-    }
-
-    startBrownianMotion() {
-        const timeout = 100;
-        const interval = setInterval(this.moveRandomly.bind(this), timeout);
+        animate({
+            duration: distance  / 200 * 1000, // Задаем скорость
+            timing: progress => progress,
+            draw: progress => {
+                // Двигаем точку в зависимости от степени завершенности анимации
+                const nextX = curX + (targetX - curX) * progress;
+                const nextY = curY + (targetY - curY) * progress;
+                this.setPosition(nextX, nextY);
+                // Если закончили движение, начинаем новое
+                if (progress === 1) {
+                    this.move();
+                }
+            },
+        });
     }
 }
