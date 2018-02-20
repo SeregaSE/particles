@@ -4,12 +4,11 @@ export default class Particle {
     constructor(initialX, initialY) {
         this.el = document.createElement('div');
         this.el.classList.add('particle');
-
-
-        // const { x, y } = this.getRandomPosition();
         this.el.style.transform = `translate(${initialX}px, ${initialY}px)`;
+        this.el.addEventListener('transitionend', this.moveRandomly.bind(this), false);
+
         document.body.appendChild(this.el);
-        // window.addEventListener('resize', this.onWindowResize.bind(this));
+        window.addEventListener('resize', this.onWindowResize.bind(this));
 
         this.setSpeed();
         this.moveRandomly();
@@ -32,20 +31,6 @@ export default class Particle {
         }
     }
 
-    getPixels(property) {
-        const value = this.el.style[property];
-        return parseInt(value);
-    }
-
-    setPixels(property, value) {
-        this.el.style[property] = [value, 'px'].join('');
-    }
-
-    setPosition(x, y) {
-        this.setPixels('left', x);
-        this.setPixels('top', y);
-    }
-
     setSpeed() {
         const { width, height } = getDocumentElementSize();
         this.speed = (1 / Math.pow(width, 2) + 1 / Math.pow(height, 2)) * 10000000;
@@ -66,11 +51,12 @@ export default class Particle {
 
     getDuration(target) {
         const distance = distanceBetween(
-            target, // target point
-            this.getPosition(), // current point
+            this.getPosition(),
+            target,
         );
 
-        return distance / this.speed; // seconds
+        // pixels per second
+        return distance / this.speed;
     }
 
     moveAt(target, duration) {
@@ -80,10 +66,8 @@ export default class Particle {
     }
 
     moveRandomly() {
-        if (this.timer) clearTimeout(this.timer);
         const target = this.getRandomPosition();
         const duration = this.getDuration(target);
         this.moveAt(target, duration);
-        this.timer = setTimeout(this.moveRandomly.bind(this), duration * 1000);
     }
 }
