@@ -1,39 +1,12 @@
 ## Particles
 
-Если кликнуть на странице, на ней появится частица, которая будет произвольно двигаться (наблюдателю может показаться будто бы она дрожит). Если много кликать по странице, будет много разноцветных частиц и все они будут произвольно двигаться.
+### Performance/fps
 
-Работает в последнем Chrome и Firefox, а про другие версии и браузеры я знаю только то, что они наследие.
+|                |Before                          |After                         |
+|----------------|-------------------------------|-----------------------------|
+|100 particles, 6x throttling |![avg fps 30 +/-5](https://github.com/SeregaSE/particles/blob/master/tests/before_100_x6_throttling) |![avg fps 60 /-10](https://github.com/SeregaSE/particles/blob/master/tests/after_100_x6_throttling) |
+|500 particles, 6x throttling |![avg fps 30 +/-5](https://github.com/SeregaSE/particles/blob/master/tests/before_500_x6_throttling) |![avg fps 40 /-5](https://github.com/SeregaSE/particles/blob/master/tests/after_500_x6_throttling) |
+|1000 particles, 6x throttling | |![avg fps 20 /-5](https://github.com/SeregaSE/particles/blob/master/tests/after_1000_x6_throttling) |
+|1000 particles |![avg fps 15 +/-5](https://github.com/SeregaSE/particles/blob/master/tests/before_1000) |![avg fps 35 /-10](https://github.com/SeregaSE/particles/blob/master/tests/after_1000) |
+|2000 particles |![avg fps 15 +/-10](https://github.com/SeregaSE/particles/blob/master/tests/before_2000) |![avg fps 30 /-5](https://github.com/SeregaSE/particles/blob/master/tests/after_2000) |
 
-### Где посмотреть
-
-Можно прямо по ссылке: https://border-radius.github.io/particles
-
-Ничего не требуется, только кликайте, пожалуйста.
-
-### Как запустить
-
-Нужно склонировать репозиторий к себе и установить зависимости:
-
-```bash
-git clone https://github.com/border-radius/particles
-cd particles
-npm i
-```
-
-Учтите, для этой процедуры у вас должен быть установлен [node.js и npm](https://nodejs.org/en/download/).
-
-Установится новый модный сборщик [parcel](https://github.com/parcel-bundler/parcel). Если вы с ним не знакомы, не пугайтесь, все очень просто. Теперь вам достаточно выполнить команду `npm start` чтобы сборщик сделал свое дело и запустил сервер для разработки. В консоли вы увидите на него ссылку, по которой стоит перейти.
-
-Кликайте по странице и наслаждайтесь.
-
-### Что с этим надо сделать
-
-1. Иногда частицы улетают за край экрана и наблюдателю может стать грустно. Не ясно, вернется частица обратно или нет. Надо с этим что-нибудь сделать, например, чтобы частицы отталкивались от края экрана.
-
-2. Частицам все равно какого размера экран. Было бы забавно если бы частицам было неуютно в тесноте и они двигались быстрее и наоборот: на просторах фуллскрина 4K-монитора, впадали бы практически в анабиоз.
-
-3. Все это как-то ужасно тормозит если покликать усердно. С этим можно что-нибудь сделать, доктор?
-
-### Чего хочется от вас
-
-Пулл-реквест с желанными фичами и оптимизациями. Простор возможностей ограничен только вашей фантазией. Будет круто если вы сможете прямо цифрами рассказать насколько мир стал лучше вашими усилиями. Все-таки, многие люди скептики и излишне придирчивы, им может не хватить сухого "стало быстрее".
