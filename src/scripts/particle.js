@@ -4,7 +4,7 @@ export default class Particle {
     constructor(initialX, initialY) {
         this.el = document.createElement('div');
         this.el.classList.add('particle');
-        this.el.style.transform = `translate(${initialX}px, ${initialY}px)`;
+        this.setTransform(initialX, initialY);
         this.el.addEventListener('transitionend', this.moveRandomly.bind(this), false);
 
         document.body.appendChild(this.el);
@@ -59,10 +59,22 @@ export default class Particle {
         return distance / this.speed;
     }
 
+    setStyle(rule, value) {
+        this.el.style[rule] = value;
+    }
+
+    setTransform(x, y) {
+        this.setStyle('transform', `translate(${x}px, ${y}px)`)
+    }
+
+    setTransition(duration) {
+        this.setStyle('transition', `transform ${duration}s`);
+    }
+
     moveAt(target, duration) {
         const { x, y } = target;
-        this.el.style.transition = `transform ${duration}s`;
-        this.el.style.transform = `translate(${x}px, ${y}px)`;
+        this.setTransition(duration);
+        this.setTransform(x, y);
     }
 
     moveRandomly() {
