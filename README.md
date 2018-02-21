@@ -1,6 +1,6 @@
 ## Particles
 
-<a href="https://seregase.github.io/particles">Результать - покликать</a>
+<a target="_blank" href="https://seregase.github.io/particles">Результать - покликать</a>
 
 - Улучшена геометрия движения частиц
 - Частицы не выходят за границы окна
